@@ -3,12 +3,12 @@ package model;
 public class Food {
     private String name;
     private int cost;
-    private int id;
+    private String code;
 
-    public Food(String name, int cost, int id) {
+    public Food(String name, int cost, String code) {
         this.name = name;
         this.cost = cost;
-        this.id = id;
+        this.code = code;
     }
 
     public String getName() {
@@ -27,12 +27,12 @@ public class Food {
         this.cost = cost;
     }
 
-    public int getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String code) {
+        this.code = code;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Food {
         return "Food{" +
                 "name='" + name + '\'' +
                 ", cost=" + cost +
-                ", id=" + id +
+                ", id=" + code +
                 '}';
     }
 }
