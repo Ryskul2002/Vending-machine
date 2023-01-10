@@ -8,20 +8,92 @@ import java.util.stream.Collectors;
 public class FileService {
 
     private int ownMoney;
-
+    private boolean pay;
     public static final Random RND = new Random();
 
     public void run() {
+        pay = false;
         printGoods();
-        userInterface();
+        payment();
+    }
+
+    public void payment() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            print("You need to choose how you will pay \n 1 -> with card \n 2 -> with coin: ");
+            int answer = new Scanner(System.in).nextInt();
+            if (answer == 1) {
+                cardOfUser(scanner);
+            } else if (answer == 2) {
+                userInterface();
+            } else {
+                System.out.println("didn't find this answer. ");
+            }
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cardOfUser(Scanner scanner) {
+        print("You have to enter the numbers of the card \n Example - 4000123456789010: ");
+        String numberOfCard = scanner.nextLine().trim();
+        print("You have to enter password of the card \n Example - 345: ");
+        String password = scanner.nextLine();
+        if (!isAlphaCard(numberOfCard) && !isAlphaPassword(password)) {
+            checkCard(numberOfCard, password, scanner);
+        } else {
+            System.out.println("You should enter correctly. ");
+        }
+    }
+
+    public void checkCard(String numbersOfCard, String password, Scanner scanner) {
+        if (numbersOfCard.length() > 16 || numbersOfCard.length() < 16) {
+            print(numbersOfCard + "is wrong");
+        } else if (password.length() > 3 || password.length() < 3) {
+            print(password + "is wrong");
+        } else {
+            setOwnMoney(100);
+            pay = true;
+            get(scanner);
+        }
+    }
+
+    public boolean isAlphaCard(String numberOfCard) {
+        if (numberOfCard == null) {
+            return false;
+        }
+        for (int i = 0; i < numberOfCard.length(); i++) {
+            char c = numberOfCard.charAt(i);
+            if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isAlphaPassword(String paasword) {
+        if (paasword == null) {
+            return false;
+        }
+        for (int i = 0; i < paasword.length(); i++) {
+            char c = paasword.charAt(i);
+            if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void userInterface() {
-        Scanner scanner = new Scanner(System.in);
-        print("Enter your money witch you have: ");
-        int userMoney = scanner.nextInt();
-        setOwnMoney(getOwnMoney() + userMoney);
-        get(scanner);
+        try {
+            Scanner scanner = new Scanner(System.in);
+            print("Enter your money witch you have: ");
+            int userMoney = scanner.nextInt();
+            setOwnMoney(getOwnMoney() + userMoney);
+            get(scanner);
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
     }
 
     public void get(Scanner scanner) {
@@ -43,31 +115,34 @@ public class FileService {
     }
 
     public void chooseVersion(String userChoice, List<Food> list, Scanner scanner) {
-        var newList = list.stream().map(Food::getCode).toList();
         switch (userChoice) {
             case "a":
-                addMoney(list, scanner);
+                if (this.pay) {
+                    print("You cannot, You have card");
+                } else {
+                    addMoney(scanner);
+                }
                 break;
-            case "b","c","d","e","f":
-                giveFood(newList, userChoice);
+            case "b", "c", "d", "e", "f":
+                giveFood(userChoice, list);
+                break;
             case "x":
                 scanner.close();
                 break;
-
+            default:
+                System.out.println("qwerty");
         }
     }
 
-    public void giveFood(List<String> list, String userChoice) {
-        for (int i = i ) {
-
-        }
+    public void giveFood(String userChoice, List<Food> filtered) {
+        var tr = filtered.stream().filter(el -> el.getCode().equals(userChoice)).toList();
+        print("You bought " + tr.stream().map(Food::getName).toList());
     }
 
-    public void addMoney(List<Food> list, Scanner scanner) {
+    public void addMoney(Scanner scanner) {
         print("Enter how much money do want to put the machine: ");
         int plusMoney = new Scanner(System.in).nextInt();
         setOwnMoney(getOwnMoney() + plusMoney);
-        System.out.println(getOwnMoney());
         get(scanner);
     }
 
